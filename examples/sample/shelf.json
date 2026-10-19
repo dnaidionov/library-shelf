@@ -1,6 +1,114 @@
 [
- {"id":"1","t":"Pride and Prejudice","a":"Austen, Jane","added":"2024-03-02","pages":279,"rating":4.29},
- {"id":"2","t":"Moby-Dick","a":"Melville, Herman","added":"2023-11-20","pages":585,"rating":3.51},
- {"id":"3","t":"Frankenstein (Penguin Classics)","a":"Shelley, Mary","added":"2025-01-09","pages":280,"rating":3.82},
- {"id":"4","t":"Not In Any Library Yet","a":"Nobody, Nemo","added":"2026-01-01","pages":100,"rating":3.0}
+ {
+  "id": "1",
+  "t": "Pride and Prejudice",
+  "a": "Austen, Jane",
+  "added": "2025-09-14",
+  "pages": 279,
+  "rating": 4.29
+ },
+ {
+  "id": "2",
+  "t": "Moby-Dick",
+  "a": "Melville, Herman",
+  "added": "2023-11-20",
+  "pages": 585,
+  "rating": 3.51
+ },
+ {
+  "id": "3",
+  "t": "Frankenstein",
+  "a": "Shelley, Mary",
+  "added": "2025-01-09",
+  "pages": 280,
+  "rating": 3.82
+ },
+ {
+  "id": "4",
+  "t": "Dracula",
+  "a": "Stoker, Bram",
+  "added": "2024-10-31",
+  "pages": 488,
+  "rating": 4.01
+ },
+ {
+  "id": "5",
+  "t": "The Count of Monte Cristo",
+  "a": "Dumas, Alexandre",
+  "added": "2022-06-02",
+  "pages": 1276,
+  "rating": 4.28
+ },
+ {
+  "id": "6",
+  "t": "Jane Eyre",
+  "a": "Brontë, Charlotte",
+  "added": "2024-02-11",
+  "pages": 532,
+  "rating": 4.15
+ },
+ {
+  "id": "7",
+  "t": "Great Expectations",
+  "a": "Dickens, Charles",
+  "added": "2023-03-27",
+  "pages": 544,
+  "rating": 3.78
+ },
+ {
+  "id": "8",
+  "t": "Wuthering Heights",
+  "a": "Brontë, Emily",
+  "added": "2025-05-05",
+  "pages": 416,
+  "rating": 3.88
+ },
+ {
+  "id": "9",
+  "t": "The Picture of Dorian Gray",
+  "a": "Wilde, Oscar",
+  "added": "2024-08-19",
+  "pages": 254,
+  "rating": 4.12
+ },
+ {
+  "id": "10",
+  "t": "Middlemarch",
+  "a": "Eliot, George",
+  "added": "2021-12-01",
+  "pages": 880,
+  "rating": 3.96
+ },
+ {
+  "id": "11",
+  "t": "Anna Karenina",
+  "a": "Tolstoy, Leo",
+  "added": "2022-09-30",
+  "pages": 864,
+  "rating": 4.15
+ },
+ {
+  "id": "12",
+  "t": "Crime and Punishment",
+  "a": "Dostoevsky, Fyodor",
+  "added": "2023-07-08",
+  "pages": 545,
+  "rating": 4.27
+ },
+ {
+  "id": "13",
+  "t": "Treasure Island",
+  "a": "Stevenson, Robert Louis",
+  "added": "2025-11-02",
+  "pages": 311,
+  "rating": 3.83
+ },
+ {
+  "id": "14",
+  "t": "Not In Any Library Yet",
+  "a": "Nobody, Nemo",
+  "added": "2026-01-01",
+  "pages": 100,
+  "rating": 3.0
+ }
 ]

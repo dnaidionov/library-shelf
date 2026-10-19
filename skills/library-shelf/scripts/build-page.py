@@ -3,7 +3,7 @@
 
 Usage: build-page.py <data-dir> [--snapshot "19 Oct 2026"]
 <data-dir> holds config.json, shelf.json, libby.json and (optional) hoopla.json.
-Output: <data-dir>/dist/library-shelf.html
+Output: <data-dir>/dist/library-shelf.html (standalone) and library-shelf.artifact.html (for the Artifact tool)
 """
 import argparse, datetime, json, pathlib
 
@@ -37,5 +37,12 @@ html = (html.replace('/*SNAPSHOT*/""', json.dumps(args.snapshot))
             .replace("/*CONFIG*/{ libraries: [], hoopla: false }", json.dumps(page_cfg)))
 out = d / "dist" / "library-shelf.html"
 out.parent.mkdir(exist_ok=True)
-out.write_text(html)
+# Standalone page: opens in any browser, offline included.
+out.write_text('<!doctype html><html lang="en"><head><meta charset="utf-8">'
+               '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">'
+               '<style>:root{color-scheme:light}body{margin:0}</style></head><body>' + html + '</body></html>')
+# Fragment for the Artifact tool, which adds its own document skeleton.
+art = d / "dist" / "library-shelf.artifact.html"
+art.write_text(html)
 print(f"{out}: {len(rows)} of {len(shelf)} shelf books found in at least one library")
+print(f"{art}: same page without the document wrapper, for publishing as an artifact")

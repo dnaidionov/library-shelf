@@ -2,6 +2,10 @@
 
 A Claude skill that checks your Goodreads shelf against your public library's digital collection (Libby/OverDrive) and Hoopla, then builds a page of the books you can borrow right now. Filter by audiobook or ebook, by library, and sort by availability, rating, length, or the date you added the book.
 
+![Library Shelf page built from the sample data in examples/sample](docs/screenshot.jpg)
+
+*Built from the fake data in `examples/sample`.*
+
 Each person builds their own page from their own accounts. Nothing is shared or uploaded by this repo.
 
 ## What you need
@@ -22,7 +26,7 @@ Open a Claude session in the folder where you want your data kept and say:
 
 > Set up my Library Shelf.
 
-Claude asks for your Goodreads profile link and your libraries, scans, and builds `library-shelf-data/dist/library-shelf.html`. A 500-book shelf takes about 15 minutes, mostly Hoopla. To refresh later: "Rescan my Library Shelf."
+Claude asks for your Goodreads profile link and your libraries, scans, and builds `library-shelf-data/dist/library-shelf.html`, a single file that opens in any browser. A 500-book shelf takes about 15 minutes, mostly Hoopla. To refresh later: "Rescan my Library Shelf."
 
 If the Artifact tool is available, Claude can also publish the page privately so you can open it on your phone.
 

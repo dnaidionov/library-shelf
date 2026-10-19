@@ -36,9 +36,9 @@ Run each script by reading its file from `scripts/` and passing the text to the 
 3. **Hoopla** (`hoopla-scan.js`, only if enabled). Navigate a tab to hoopladigital.com; `window.name` still holds the shelf if you navigate in the same tab (otherwise set it again). Run in chunks: set `window.__LS_HOOPLA_LIMIT` to about 400 first, wait for `fin`, reload the tab, then run again without a limit; it resumes from sessionStorage. Expect roughly 2 searches per second. If the tab freezes or crashes, reload and rerun. Export `window.__LS_HOOPLA` and save as `hoopla.json`.
 
 ## Build and publish
-Run `python3 <skill-dir>/scripts/build-page.py <data-dir> --snapshot "<today, e.g. 19 Oct 2026>"`. It writes `<data-dir>/dist/library-shelf.html`, a single self-contained file.
+Run `python3 <skill-dir>/scripts/build-page.py <data-dir> --snapshot "<today, e.g. 19 Oct 2026>"`. It writes two self-contained files in `<data-dir>/dist/`: `library-shelf.html` (opens in any browser) and `library-shelf.artifact.html` (the same page without the document wrapper, for the Artifact tool).
 
-Show it to the user: if the Artifact tool is available, publish the file as a private artifact (first load the artifact-design skill if its instructions require it; the page already follows them) and give the link; keep the artifact URL in `config.json` as `artifactUrl` so later runs update the same page. Otherwise tell them where the file is; it opens in any browser, on desktop or phone.
+Show it to the user: if the Artifact tool is available, publish `library-shelf.artifact.html` as a private artifact (first load the artifact-design skill if its instructions require it; the page already follows them) and give the link; keep the artifact URL in `config.json` as `artifactUrl` so later runs update the same page. Otherwise tell them where `library-shelf.html` is; it opens in any browser, on desktop or phone.
 
 ## Rescan (update)
 The page cannot scan by itself; its Rescan button only shows the request to give Claude. When the user asks to update: reuse `config.json`, run **Scan** and **Build**, and republish to the saved `artifactUrl`. Mention the new snapshot date and how many books changed status if easy to tell.
