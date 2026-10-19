@@ -1,0 +1,6 @@
+[
+ {"id":"1","t":"Pride and Prejudice","a":"Austen, Jane","added":"2024-03-02","pages":279,"rating":4.29},
+ {"id":"2","t":"Moby-Dick","a":"Melville, Herman","added":"2023-11-20","pages":585,"rating":3.51},
+ {"id":"3","t":"Frankenstein (Penguin Classics)","a":"Shelley, Mary","added":"2025-01-09","pages":280,"rating":3.82},
+ {"id":"4","t":"Not In Any Library Yet","a":"Nobody, Nemo","added":"2026-01-01","pages":100,"rating":3.0}
+]

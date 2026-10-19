@@ -1,0 +1,10 @@
+{
+  "goodreadsUserId": "0000000",
+  "shelf": "to-read",
+  "libraries": [
+    { "key": "nypl", "name": "New York Public Library" },
+    { "key": "brooklyn", "name": "Brooklyn Public Library" }
+  ],
+  "hoopla": true,
+  "skipScripts": ["Han", "Hiragana", "Katakana", "Hangul", "Arabic", "Hebrew", "Greek"]
+}

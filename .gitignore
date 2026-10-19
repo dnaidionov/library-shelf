@@ -1,0 +1,6 @@
+.DS_Store
+# Personal data: never commit
+library-shelf-data/
+config.json
+!examples/sample/config.json
+dist/

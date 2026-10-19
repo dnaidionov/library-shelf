@@ -1,0 +1,7 @@
+{
+  "name": "library-shelf",
+  "description": "Check a Goodreads shelf against your Libby/OverDrive and Hoopla libraries and build a personal page of what you can borrow now.",
+  "version": "0.1.0",
+  "author": { "name": "dnaidionov" },
+  "license": "MIT"
+}

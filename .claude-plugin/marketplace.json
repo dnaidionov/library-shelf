@@ -1,0 +1,11 @@
+{
+  "name": "library-shelf",
+  "owner": { "name": "dnaidionov" },
+  "plugins": [
+    {
+      "name": "library-shelf",
+      "source": "./",
+      "description": "Build a personal page of Goodreads books you can borrow now from your libraries."
+    }
+  ]
+}

@@ -1,0 +1,227 @@
+<title>Library Shelf</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Literata:opsz,wght@7..72,500;7..72,600&display=swap">
+<style>
+/* Layout: one narrow reading column; sticky filter bar on top, one row per book with a chip per library. */
+:root {
+  --bg: #f2f4f6; --surface: #ffffff; --fg: #15212b; --muted: #5b6a78; --line: #d9e0e6;
+  --accent: #0d5c63; --accent-fg: #ffffff; --ok: #1d7a3e; --ok-bg: #e0f3e6; --wait: #8a5a00; --wait-bg: #fbefcf; --none: #8795a1;
+  --display: 'Literata', Georgia, serif; --body: 'IBM Plex Sans', system-ui, sans-serif; --mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f171e; --surface: #17222b; --fg: #e6edf2; --muted: #98a7b4; --line: #27343f;
+  --accent: #5cc4cc; --accent-fg: #06262a; --ok: #6fd18f; --ok-bg: #153523; --wait: #f0c35a; --wait-bg: #3a2d0c; --none: #6b7a87; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0f171e; --surface: #17222b; --fg: #e6edf2; --muted: #98a7b4; --line: #27343f;
+  --accent: #5cc4cc; --accent-fg: #06262a; --ok: #6fd18f; --ok-bg: #153523; --wait: #f0c35a; --wait-bg: #3a2d0c; --none: #6b7a87; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 15px/1.45 var(--body); padding-block: 0 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 760px; margin: 0 auto; }
+header { padding-block: 24px 12px; }
+h1 { font: 600 28px/1.15 var(--display); margin: 0; text-wrap: balance; }
+.sub { color: var(--muted); margin: 6px 0 0; font-size: 13px; }
+.sub b { font-family: var(--mono); font-weight: 500; color: var(--fg); }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 2; background: var(--bg); padding-block: 10px; border-bottom: 1px solid var(--line); display: grid; gap: 10px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; min-width: 0; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.seg button { border: 0; background: transparent; color: var(--fg); font: 500 14px var(--body); padding: 8px 14px; cursor: pointer; min-height: 40px; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); }
+.chip { border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 999px; padding: 6px 12px; font: 500 13px var(--body); cursor: pointer; min-height: 36px; }
+.chip[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.chip[aria-pressed="false"] { color: var(--muted); text-decoration: line-through; }
+input[type=search], select { font: 15px var(--body); color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; min-height: 40px; min-width: 0; }
+input[type=search] { flex: 1 1 180px; }
+label.tog { display: inline-flex; gap: 6px; align-items: center; font-size: 14px; min-height: 40px; }
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.count { font: 500 13px var(--mono); color: var(--muted); margin: 14px 0 6px; }
+ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+li { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 8px; }
+.t { font: 600 17px/1.25 var(--display); margin: 0; overflow-wrap: anywhere; }
+.t a { color: inherit; text-decoration: none; }
+.t a:hover { text-decoration: underline; }
+.a { color: var(--muted); font-size: 13px; margin: 2px 0 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.b { display: inline-flex; gap: 6px; align-items: baseline; border-radius: 6px; padding: 4px 8px; font-size: 13px; text-decoration: none; color: var(--fg); border: 1px solid var(--line); }
+.b em { font: normal 500 11px var(--mono); color: var(--muted); }
+.b.ok { background: var(--ok-bg); color: var(--ok); border-color: transparent; font-weight: 600; }
+.b.ok em { color: var(--ok); }
+.b.wait { background: var(--wait-bg); color: var(--wait); border-color: transparent; }
+.b.wait em { color: var(--wait); }
+.empty { color: var(--muted); padding: 32px 0; text-align: center; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 13px; display: grid; gap: 8px; }
+.panel p { margin: 0; }
+.panel code { font: 12px/1.4 var(--mono); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; flex: 1 1 240px; min-width: 0; overflow-wrap: anywhere; }
+.note { color: var(--muted); }
+.added { font: 400 12px/1.5 var(--mono); color: var(--muted); margin: 0; }
+footer { color: var(--muted); font-size: 12px; margin-top: 24px; }
+</style>
+<div class="wrap">
+  <header>
+    <h1>Library Shelf</h1>
+    <p class="sub">Your Goodreads “to-read” shelf, checked against your libraries. Snapshot taken <b id="snap"></b>. Availability changes through the day, so tap a library to confirm.</p>
+  </header>
+  <div class="bar" role="search">
+    <div class="row">
+      <div class="seg" role="group" aria-label="Format">
+        <button id="f-a" aria-pressed="true" type="button">Audiobook</button>
+        <button id="f-b" aria-pressed="false" type="button">Both formats</button>
+      </div>
+      <label class="tog"><input type="checkbox" id="waitl"> Include waitlisted</label>
+    </div>
+    <div class="row" id="libs" role="group" aria-label="Libraries"></div>
+    <div class="row">
+      <input type="search" id="q" placeholder="Search title or author" aria-label="Search title or author">
+      <select id="sort" aria-label="Sort by">
+        <option value="avail">Sort: most places available</option>
+        <option value="added">Sort: date added</option>
+        <option value="rating">Sort: Goodreads rating</option>
+        <option value="pages">Sort: pages</option>
+        <option value="audio">Sort: audiobook length</option>
+        <option value="title">Sort: title</option>
+        <option value="author">Sort: author</option>
+        <option value="wait">Sort: shortest wait</option>
+      </select>
+      <button id="dir" class="chip" type="button" aria-label="Sort direction"></button>
+      <button id="rescan" class="chip" type="button" aria-expanded="false" aria-controls="rescan-panel">Rescan</button>
+    </div>
+    <div id="rescan-panel" class="panel" hidden>
+      <p>This page can’t reach your libraries or Goodreads by itself, so a rescan is run for you by Claude in your own Chrome (Hoopla, if you use it, needs you logged in there). Copy this request into the Claude session where you set up this page:</p>
+      <div class="row"><code id="rescan-text">Rescan my Goodreads shelf with the library-shelf skill and republish my Library Shelf page.</code><button id="rescan-copy" class="chip" type="button">Copy</button></div>
+      <p class="note" id="rescan-note"></p>
+    </div>
+  </div>
+  <div class="count" id="count" aria-live="polite"></div>
+  <ul id="list"></ul>
+  <footer id="foot"></footer>
+</div>
+<script>
+// rows: [goodreadsId, title, author, {N|B|C + a|e: [copiesAvailable, holds]}, hoopla "a"|"e"|"ae"|"", dateAdded "YYYY-MM-DD"|"", [pages, goodreadsRating, audiobookMinutes?]]
+const SNAPSHOT = /*SNAPSHOT*/"";
+const DATA = /*DATA*/[];
+// CONFIG.libraries: [{ key, name }] (Libby/OverDrive keys); CONFIG.hoopla: boolean
+const CONFIG = /*CONFIG*/{ libraries: [], hoopla: false };
+const LIBS = CONFIG.libraries.map(l => ({ id: l.key, name: l.name, libby: l.key }));
+if (CONFIG.hoopla) LIBS.push({ id: 'H', name: 'Hoopla' });
+const $ = id => document.getElementById(id);
+const state = { both: false, wait: false, q: '', sort: 'avail', dir: 1, libs: new Set(LIBS.map(l => l.id)) };
+const DEFAULT_DIR = { title: 1, author: 1, added: -1, rating: -1, pages: 1, audio: 1 };
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const fmtLen = m => (m >= 60 ? Math.floor(m / 60) + ' h ' : '') + (m % 60 ? (m % 60) + ' min' : '').trim();
+const fmtDate = s => { const [y, m, d] = s.split('-').map(Number); return d + ' ' + MONTHS[m - 1] + ' ' + y; };
+try { const s = JSON.parse(localStorage.getItem('shelf') || '{}'); if (s.libs) state.libs = new Set(s.libs); if (s.both) state.both = true; } catch (e) {}
+const save = () => { try { localStorage.setItem('shelf', JSON.stringify({ libs: [...state.libs], both: state.both })); } catch (e) {} };
+$('snap').textContent = SNAPSHOT;
+
+// Per book: which places offer it, in the chosen formats.
+function offers(row) {
+  const fmts = state.both ? ['a', 'e'] : ['a'];
+  const out = [];
+  for (const l of LIBS) {
+    if (!state.libs.has(l.id)) continue;
+    if (l.id === 'H') {
+      const f = fmts.filter(x => row[4].includes(x));
+      if (f.length) out.push({ lib: l, now: true, fmt: f, holds: 0 });
+      continue;
+    }
+    let best = null;
+    for (const f of fmts) {
+      const v = row[3][l.id + ':' + f];
+      if (!v) continue;
+      const cand = { lib: l, now: v[0] > 0, fmt: [f], holds: v[1], copies: v[0] };
+      if (!best || (cand.now && !best.now) || (cand.now === best.now && cand.holds < best.holds)) best = cand;
+      else if (best && cand.now === best.now && cand.holds === best.holds) best.fmt.push(f);
+    }
+    if (best) out.push(best);
+  }
+  return out;
+}
+const fmtName = f => f.map(x => x === 'a' ? 'audio' : 'ebook').join(' + ');
+const link = (o, row) => o.lib.id === 'H'
+  ? 'https://www.hoopladigital.com/search?q=' + encodeURIComponent(row[1].replace(/\(.*?\)/g, '').trim())
+  : 'https://libbyapp.com/search/' + o.lib.libby + '/search/query-' + encodeURIComponent(row[1].replace(/\(.*?\)/g, '').trim()) + '/page-1';
+
+// Missing values always sort last, whichever direction is chosen.
+const numCmp = (x, y, d) => (x ? 0 : 1) - (y ? 0 : 1) || d * ((x || 0) - (y || 0));
+function render() {
+  const q = state.q.trim().toLowerCase();
+  const rows = [];
+  for (const row of DATA) {
+    if (q && !(row[1] + ' ' + row[2]).toLowerCase().includes(q)) continue;
+    const o = offers(row);
+    const now = o.filter(x => x.now);
+    if (!now.length && !(state.wait && o.length)) continue;
+    rows.push({ row, o, now: now.length, minHold: Math.min(...o.map(x => x.now ? 0 : x.holds)) });
+  }
+  const d = state.dir;
+  const cmp = {
+    avail: (a, b) => b.now - a.now || a.row[1].localeCompare(b.row[1]),
+    title: (a, b) => d * a.row[1].localeCompare(b.row[1]),
+    author: (a, b) => d * a.row[2].localeCompare(b.row[2]) || a.row[1].localeCompare(b.row[1]),
+    added: (a, b) => d * ((a.row[5] || '').localeCompare(b.row[5] || '')) || a.row[1].localeCompare(b.row[1]),
+    rating: (a, b) => numCmp(a.row[6] && a.row[6][1], b.row[6] && b.row[6][1], d) || a.row[1].localeCompare(b.row[1]),
+    pages: (a, b) => numCmp(a.row[6] && a.row[6][0], b.row[6] && b.row[6][0], d) || a.row[1].localeCompare(b.row[1]),
+    audio: (a, b) => numCmp(a.row[6] && a.row[6][2], b.row[6] && b.row[6][2], d) || a.row[1].localeCompare(b.row[1]),
+    wait: (a, b) => a.minHold - b.minHold || a.row[1].localeCompare(b.row[1])
+  }[state.sort];
+  rows.sort(cmp);
+  $('count').textContent = rows.length + (rows.length === 1 ? ' book' : ' books') + (state.wait ? ' on offer' : ' you can borrow now');
+  const ul = $('list'); ul.textContent = '';
+  if (!rows.length) { const p = document.createElement('li'); p.className = 'empty'; p.textContent = 'Nothing matches. Try another library, add waitlisted titles, or switch to both formats.'; ul.append(p); return; }
+  for (const { row, o } of rows) {
+    const li = document.createElement('li');
+    const h = document.createElement('div');
+    const t = document.createElement('p'); t.className = 't';
+    const a = document.createElement('a'); a.href = 'https://www.goodreads.com/book/show/' + row[0]; a.target = '_blank'; a.rel = 'noopener'; a.textContent = row[1].replace(/\s*\(.*?\)\s*$/, '');
+    t.append(a);
+    const au = document.createElement('p'); au.className = 'a'; au.textContent = row[2].split(',').reverse().join(' ').trim();
+    h.append(t, au);
+    const meta = [];
+    const st = row[6] || [];
+    if (st[1]) meta.push('★ ' + st[1].toFixed(2));
+    if (st[0]) meta.push(st[0] + ' pages');
+    if (st[2]) meta.push(fmtLen(st[2]) + ' audio');
+    if (row[5]) meta.push('added ' + fmtDate(row[5]));
+    if (meta.length) { const ad = document.createElement('p'); ad.className = 'added'; ad.textContent = meta.join(' · '); h.append(ad); }
+    const chips = document.createElement('div'); chips.className = 'chips';
+    for (const x of o.sort((p, q2) => (q2.now - p.now) || p.holds - q2.holds)) {
+      const c = document.createElement('a'); c.className = 'b ' + (x.now ? 'ok' : 'wait'); c.href = link(x, row); c.target = '_blank'; c.rel = 'noopener';
+      const nm = document.createElement('span'); nm.textContent = x.lib.name;
+      const em = document.createElement('em');
+      em.textContent = fmtName(x.fmt) + (x.now ? (x.lib.id === 'H' ? '' : ' · available') : ' · ' + x.holds + (x.holds === 1 ? ' hold' : ' holds'));
+      c.append(nm, em); chips.append(c);
+    }
+    li.append(h, chips); ul.append(li);
+  }
+}
+// Labels for direction +1 and -1.
+const DIR_LABEL = { title: ['A → Z', 'Z → A'], author: ['A → Z', 'Z → A'], added: ['Oldest first', 'Newest first'], rating: ['Lowest first', 'Highest first'], pages: ['Shortest first', 'Longest first'], audio: ['Shortest first', 'Longest first'] };
+function syncDir() {
+  const lab = DIR_LABEL[state.sort];
+  $('dir').hidden = !lab;
+  if (lab) $('dir').textContent = state.dir === 1 ? lab[0] : lab[1];
+}
+function syncControls() {
+  syncDir();
+  $('f-a').setAttribute('aria-pressed', String(!state.both)); $('f-b').setAttribute('aria-pressed', String(state.both));
+  document.querySelectorAll('#libs .chip').forEach(b => b.setAttribute('aria-pressed', String(state.libs.has(b.dataset.id))));
+}
+for (const l of LIBS) { const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.dataset.id = l.id; b.textContent = l.name;
+  b.onclick = () => { state.libs.has(l.id) ? state.libs.delete(l.id) : state.libs.add(l.id); save(); $('foot').textContent = 'Matching is by title and author, so a few editions may be missed or mismatched.' + (CONFIG.hoopla ? ' Hoopla titles borrow instantly within your monthly limit.' : '');
+syncControls(); render(); }; $('libs').append(b); }
+$('f-a').onclick = () => { state.both = false; save(); syncControls(); render(); };
+$('f-b').onclick = () => { state.both = true; save(); syncControls(); render(); };
+$('waitl').onchange = e => { state.wait = e.target.checked; render(); };
+$('q').oninput = e => { state.q = e.target.value; render(); };
+$('sort').onchange = e => { state.sort = e.target.value; state.dir = DEFAULT_DIR[state.sort] || 1; syncDir(); render(); };
+$('dir').onclick = () => { state.dir = -state.dir; syncDir(); render(); };
+$('rescan-note').textContent = 'This page is a snapshot from ' + SNAPSHOT + '. A scan takes about 15 minutes.';
+$('rescan').onclick = () => { const p = $('rescan-panel'); p.hidden = !p.hidden; $('rescan').setAttribute('aria-expanded', String(!p.hidden)); };
+$('rescan-copy').onclick = async () => {
+  const text = $('rescan-text').textContent;
+  try { await navigator.clipboard.writeText(text); $('rescan-copy').textContent = 'Copied'; }
+  catch (e) { const r = document.createRange(); r.selectNodeContents($('rescan-text')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $('rescan-copy').textContent = 'Press copy'; }
+  setTimeout(() => { $('rescan-copy').textContent = 'Copy'; }, 2000);
+};
+syncControls(); render();
+</script>
